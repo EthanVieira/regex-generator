@@ -13,7 +13,7 @@ def shrink(inputStr, nbSteps):
 
         # get the index of the next character
         innerIdx = idx + nbSteps
-        
+
         # get tokens n steps long and compare with current token
         compLetter = inputStr[innerIdx:innerIdx+nbSteps]
         print("compLetter:", compLetter)
@@ -46,7 +46,7 @@ def composeMatrix(inputStrings):
     maxStrLen = 0
     for s in inputStrings:
         maxStrLen = max(inputStringsLen)
-    
+
     # create the matrix of input string characters
     m = [[] for x in range(maxStrLen)]
     for row in range(maxStrLen):
@@ -55,8 +55,8 @@ def composeMatrix(inputStrings):
                 m[row].append(s[row])
             else:
                 m[row].append("EOS")
-    
-    return m        
+
+    return m
 
 # check if all items in a list are the same item
 def hasSameItem(row):
@@ -70,29 +70,27 @@ def createCommPattern(inputStrings):
     # check which case the input strings fall into
     areSameLength = all(len(s) == len(inputStrings[0]) for s in inputStrings)
     print(areSameLength)
-    
+
     # initial variables
     commPattern = ""
     inputMatrix = composeMatrix(inputStrings)
     idxAdjustments = [0 for x in range(len(inputMatrix[0]))]
-    
+
     # if the input strings have the same length, don't use any adjustments
     if areSameLength:
-        for rowIdx in range(len(inputMatrix)):
-            row = inputMatrix[rowIdx]
+        for rowIdx, row in enumerate(inputMatrix):
             if hasSameItem(row):
                 commPattern += row[0]
             else:
-                commPattern += "[" 
+                commPattern += "["
                 for item in row:
                     commPattern += item
                 commPattern += "]"
         return commPattern
 
     # loop through each row in the matrix
-    for rowIdx in range(len(inputMatrix)):
-        # make the adjusted row 
-        row = inputMatrix[rowIdx]
+    for rowIdx, row in enumerate(inputMatrix):
+        # make the adjusted row
         adjustedRow = []
         for i in range(len(row)):
             adjustment = idxAdjustments[i]
@@ -100,12 +98,12 @@ def createCommPattern(inputStrings):
                 return commPattern
             adjustedRow.append(inputMatrix[rowIdx + adjustment][i])
 
-        # skip rows 
+        # skip rows
         if hasSameItem(adjustedRow):
             print(adjustedRow)
             if adjustedRow[0] == "EOS":
                 return commPattern
-        
+
             commPattern += adjustedRow[0]
             continue
 
@@ -114,14 +112,14 @@ def createCommPattern(inputStrings):
         while inputMatrix[rowIdx+adjustment][0] != row[1]:
             commPattern += inputMatrix[rowIdx+adjustment][0] + "?"
             adjustment += 1
-            
+
             if (rowIdx+adjustment) >= len(inputMatrix):
                 print("?????")
                 return commPattern
-                
+
         idxAdjustments[0] = adjustment
 
-        # make the adjusted row 
+        # make the adjusted row
         adjustedRow = []
         for i in range(len(row)):
             adjustment = idxAdjustments[i]
@@ -137,32 +135,32 @@ def createCommPattern(inputStrings):
 
     return commPattern
 
+if __name__ == '__main__':
+    ### Test 1 ###
+    print("Testing shrink():")
 
-### Test 1 ###
-print("Testing shrink():")
+    # initial variables
+    inputStr = "aaaaaaaabcabcabca"
+    maxChars = len(inputStr) / 2
 
-# initial variables
-inputStr = "aaaaaaaabcabcabca"
-maxChars = len(inputStr) / 2
+    # tests
+    output = shrink(inputStr, 1)
+    output = shrink(output, 2)
+    output = shrink(output, 3)
 
-# tests
-output = shrink(inputStr, 1)
-output = shrink(output, 2)
-output = shrink(output, 3)
-
-# print the resulting shortened regex string
-print("Result:", output)
-
-
-### Test 2 ###
-print("Testing composeMatrix():")
-inputStrings = ["aabc", "abc"]
-m = composeMatrix(inputStrings)
-print(m)
+    # print the resulting shortened regex string
+    print("Result:", output)
 
 
-### Test 3 ###
-print("Testing createCommPattern():")
-inputStrings = ["sed", "abc"]
-commPattern = createCommPattern(inputStrings)
-print(commPattern)
+    ### Test 2 ###
+    print("Testing composeMatrix():")
+    inputStrings = ["aabc", "abc"]
+    m = composeMatrix(inputStrings)
+    print(m)
+
+
+    ### Test 3 ###
+    print("Testing createCommPattern():")
+    inputStrings = ["sed", "abc"]
+    commPattern = createCommPattern(inputStrings)
+    print(commPattern)
